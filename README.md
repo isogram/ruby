@@ -2,29 +2,29 @@
 
 This is Airbnb's Ruby Style Guide.
 
-It was inspired by [Github's guide][github-ruby] and [Bozhidar Batsov's guide][bbatsov-ruby].
+It was inspired by [GitHub's guide](https://web.archive.org/web/20160410033955/https://github.com/styleguide/ruby) and [Rubocop guide][rubocop-guide].
 
 Airbnb also maintains a [JavaScript Style Guide][airbnb-javascript].
 
 ## Table of Contents
   1. [Whitespace](#whitespace)
-    1. [Indentation](#indentation)
-    1. [Inline](#inline)
-    1. [Newlines](#newlines)
+      1. [Indentation](#indentation)
+      1. [Inline](#inline)
+      1. [Newlines](#newlines)
   1. [Line Length](#line-length)
   1. [Commenting](#commenting)
-    1. [File/class-level comments](#fileclass-level-comments)
-    1. [Function comments](#function-comments)
-    1. [Block and inline comments](#block-and-inline-comments)
-    1. [Punctuation, spelling, and grammar](#punctuation-spelling-and-grammar)
-    1. [TODO comments](#todo-comments)
-    1. [Commented-out code](#commented-out-code)
+      1. [File/class-level comments](#fileclass-level-comments)
+      1. [Function comments](#function-comments)
+      1. [Block and inline comments](#block-and-inline-comments)
+      1. [Punctuation, spelling, and grammar](#punctuation-spelling-and-grammar)
+      1. [TODO comments](#todo-comments)
+      1. [Commented-out code](#commented-out-code)
   1. [Methods](#methods)
-    1. [Method definitions](#method-definitions)
-    1. [Method calls](#method-calls)
+      1. [Method definitions](#method-definitions)
+      1. [Method calls](#method-calls)
   1. [Conditional Expressions](#conditional-expressions)
-    1. [Conditional keywords](#conditional-keywords)
-    1. [Ternary operator](#ternary-operator)
+      1. [Conditional keywords](#conditional-keywords)
+      1. [Ternary operator](#ternary-operator)
   1. [Syntax](#syntax)
   1. [Naming](#naming)
   1. [Classes](#classes)
@@ -34,15 +34,16 @@ Airbnb also maintains a [JavaScript Style Guide][airbnb-javascript].
   1. [Regular Expressions](#regular-expressions)
   1. [Percent Literals](#percent-literals)
   1. [Rails](#rails)
-    1. [Scopes](#scopes)
+      1. [Scopes](#scopes)
   1. [Be Consistent](#be-consistent)
+  1. [Translation](#translation)
 
 ## Whitespace
 
 ### Indentation
 
-* <a name="default-indentation"></a>Use soft-tabs with a two
-    space-indent.<sup>[[link](#default-indentation)]</sup>
+* <a name="default-indentation"></a>Use soft-tabs with a
+    two-space indent.<sup>[[link](#default-indentation)]</sup>
 
 * <a name="indent-when-as-case"></a>Indent `when` as deep as `case`.
     <sup>[[link](#indent-when-as-case)]</sup>
@@ -161,7 +162,7 @@ Airbnb also maintains a [JavaScript Style Guide][airbnb-javascript].
 * <a name="spaces-block-params"></a>Do not include space inside block
     parameter pipes. Include one space between parameters in a block.
     Include one space outside block parameter pipes.
-    <sup>[[link](#spaces-block-params")]</sup>
+    <sup>[[link](#spaces-block-params)]</sup>
 
     ```ruby
     # bad
@@ -210,7 +211,7 @@ Airbnb also maintains a [JavaScript Style Guide][airbnb-javascript].
 
 ### Newlines
 
-* <a name="multiline-if-newline"></a>Add a new line after `if` conditions span
+* <a name="multiline-if-newline"></a>Add a new line after `if` conditions spanning
     multiple lines to help differentiate between the conditions and the body.
     <sup>[[link](#multiline-if-newline)]</sup>
 
@@ -387,7 +388,7 @@ all of the following criteria:
 
 You may use whatever format you wish. In Ruby, two popular function
 documentation schemes are [TomDoc](http://tomdoc.org/) and
-[YARD](http://rubydoc.info/docs/yard/file/docs/GettingStarted.md). You can also
+[YARD](https://rubydoc.info/docs/yard/file/docs/GettingStarted.md). You can also
 just write things out concisely:
 
 ```ruby
@@ -420,7 +421,7 @@ def fallbacks_for(the_locale, opts = {})
   # We make two assumptions here:
   # 1) There is only one default locale (that is, it has no less-specific
   #    children).
-  # 1) The default locale is just a language. (Like :en, and not :"en-US".)
+  # 2) The default locale is just a language. (Like :en, and not :"en-US".)
   if opts[:exclude_default] &&
       ret.last == default_locale &&
       ret.last != language_from_locale(the_locale)
@@ -513,7 +514,8 @@ Thus when you create a TODO, it is almost always your name that is given.
      end
      ```
 
-* <a name="no-default-args"></a>Do not use default arguments. Use an options
+* <a name="no-default-args"></a>Do not use default positional arguments.
+    Use keyword arguments (if available - in Ruby 2.0 or later) or an options
     hash instead.<sup>[[link](#no-default-args)]</sup>
 
     ```ruby
@@ -523,13 +525,17 @@ Thus when you create a TODO, it is almost always your name that is given.
     end
 
     # good
+    def obliterate(things, gently: true, except: [], at: Time.now)
+      ...
+    end
+
+    # good
     def obliterate(things, options = {})
-      default_options = {
+      options = {
         :gently => true, # obliterate with soft-delete
         :except => [], # skip obliterating these things
         :at => Time.now, # don't obliterate them until later
-      }
-      options.reverse_merge!(default_options)
+      }.merge(options)
 
       ...
     end
@@ -728,6 +734,35 @@ In either case:
       end
     ```
 
+* <a name="unless-with-comparison-operator"></a>Avoid `unless` with comparison operators if you can use `if` with an opposing comparison operator.<sup>[[link](#unless-with-comparison-operator)]</sup>
+
+    ```ruby
+      # bad
+      unless x == 10
+        ...
+      end
+
+      # good
+      if x != 10
+        ...
+      end
+
+      # bad
+      unless x < 10
+        ...
+      end
+
+      # good
+      if x >= 10
+        ...
+      end
+
+      # ok
+      unless x === 10
+        ...
+      end
+    ```
+
 * <a name="parens-around-conditions"></a>Don't use parentheses around the
     condition of an `if/unless/while`.
     <sup>[[link](#parens-around-conditions)]</sup>
@@ -797,6 +832,71 @@ In either case:
     end
     ```
 
+### Nested conditionals
+
+* <a name="no-nested-conditionals"></a>
+  Avoid the use of nested conditionals for flow of control.
+  ([More on this][avoid-else-return-early].) <sup>[[link](#no-nested-conditionals)]</sup>
+
+  Prefer a guard clause when you can assert invalid data. A guard clause
+  is a conditional statement at the top of a function that returns as soon
+  as it can.
+
+  The general principles boil down to:
+  * Return immediately once you know your function cannot do anything more.
+  * Reduce nesting and indentation in the code by returning early. This makes
+  the code easier to read and requires less mental bookkeeping on the part
+  of the reader to keep track of `else` branches.
+  * The core or most important flows should be the least indented.
+
+  ```ruby
+  # bad
+  def compute
+    server = find_server
+    if server
+      client = server.client
+      if client
+        request = client.make_request
+        if request
+           process_request(request)
+        end
+      end
+    end
+  end
+
+  # good
+  def compute
+    server = find_server
+    return unless server
+    client = server.client
+    return unless client
+    request = client.make_request
+    return unless request
+    process_request(request)
+  end
+  ```
+
+  Prefer `next` in loops instead of conditional blocks.
+
+  ```ruby
+  # bad
+  [0, 1, 2, 3].each do |item|
+    if item > 1
+      puts item
+    end
+  end
+
+  # good
+  [0, 1, 2, 3].each do |item|
+    next unless item > 1
+    puts item
+  end
+  ```
+
+  See also the section "Guard Clause", p68-70 in Beck, Kent.
+  *Implementation Patterns*. Upper Saddle River: Addison-Wesley, 2008, which
+  has inspired some of the content above.
+
 ## Syntax
 
 * <a name="no-for"></a>Never use `for`, unless you know exactly why. Most of the
@@ -831,6 +931,18 @@ In either case:
 
     # bad
     names.each do |name| puts name end
+
+    # good
+    names.each do |name|
+      puts name
+      puts 'yay!'
+    end
+
+    # bad
+    names.each { |name|
+      puts name
+      puts 'yay!'
+    }
 
     # good
     names.select { |name| name.start_with?("S") }.map { |name| name.upcase }
@@ -1012,6 +1124,56 @@ In either case:
        an attribute when `self` is an ActiveRecord model: `self.guest = user`.
     3. Referencing the current instance's class: `self.class`.
 
+* <a name="freeze-constants"></a>When defining an object of any mutable
+    type meant to be a constant, make sure to call `freeze` on it. Common
+    examples are strings, arrays, and hashes.
+    ([More on this][ruby-freeze].)<sup>[[link](#freeze-constants)]</sup>
+
+    The reason is that Ruby constants are actually mutable. Calling `freeze`
+    ensures they are not mutated and are therefore truly constant and
+    attempting to modify them will raise an exception. For strings, this allows
+    older versions of Ruby below 2.2 to intern them.
+
+    ```ruby
+    # bad
+    class Color
+      RED = 'red'
+      BLUE = 'blue'
+      GREEN = 'green'
+
+      ALL_COLORS = [
+        RED,
+        BLUE,
+        GREEN,
+      ]
+
+      COLOR_TO_RGB = {
+        RED => 0xFF0000,
+        BLUE => 0x0000FF,
+        GREEN => 0x00FF00,
+      }
+    end
+
+    # good
+    class Color
+      RED = 'red'.freeze
+      BLUE = 'blue'.freeze
+      GREEN = 'green'.freeze
+
+      ALL_COLORS = [
+        RED,
+        BLUE,
+        GREEN,
+      ].freeze
+
+      COLOR_TO_RGB = {
+        RED => 0xFF0000,
+        BLUE => 0x0000FF,
+        GREEN => 0x00FF00,
+      }.freeze
+    end
+    ```
+
 ## Naming
 
 * <a name="snake-case"></a>Use `snake_case` for methods and variables.
@@ -1038,9 +1200,8 @@ In either case:
     <sup>[[link](#throwaway-variables)]</sup>
 
     ```ruby
-    payment, _ = Payment.complete_paypal_payment!(params[:token],
-                                                  native_currency,
-                                                  created_at)
+    version = '3.2.1'
+    major_version, minor_version, _ = version.split('.')
     ```
 
 ## Classes
@@ -1199,6 +1360,23 @@ In either case:
     raise MyExplicitError
     ```
 
+
+* <a name="exception-class-messages"></a>
+    Prefer supplying an exception class and a message as two separate arguments
+    to `raise`, instead of an exception instance.
+    <sup>[[link](#exception-class-messages)]</sup>
+
+    ```Ruby
+    # bad
+    raise SomeException.new('message')
+    # Note that there is no way to do `raise SomeException.new('message'), backtrace`.
+
+    # good
+    raise SomeException, 'message'
+    # Consistent with `raise SomeException, 'message', backtrace`.
+    ```
+
+
 * <a name="rescue-as-modifier"></a>Avoid using rescue in its modifier form.
     <sup>[[link](#rescue-as-modifier)]</sup>
 
@@ -1285,7 +1463,7 @@ In either case:
 * <a name="deprecated-hash-methods"></a>Use `Hash#key?` instead of
     `Hash#has_key?` and `Hash#value?` instead of `Hash#has_value?`. According
     to Matz, the longer forms are considered deprecated.
-    <sup>[[link](#deprecated-hash-methods")</sup>
+    <sup>[[link](#deprecated-hash-methods)]</sup>
 
     ```ruby
     # bad
@@ -1561,9 +1739,17 @@ In either case:
 &mdash;[Google C++ Style Guide][google-c++]
 
 [airbnb-javascript]: https://github.com/airbnb/javascript
-[bbatsov-ruby]: https://github.com/bbatsov/ruby-style-guide
+[rubocop-guide]: https://github.com/rubocop-hq/ruby-style-guide
 [github-ruby]: https://github.com/styleguide/ruby
-[google-c++]: http://google-styleguide.googlecode.com/svn/trunk/cppguide.xml
-[google-c++-comments]: http://google-styleguide.googlecode.com/svn/trunk/cppguide.xml#Comments
-[google-python-comments]: http://google-styleguide.googlecode.com/svn/trunk/pyguide.html#Comments
+[google-c++]: https://google.github.io/styleguide/cppguide.html
+[google-c++-comments]: https://google.github.io/styleguide/cppguide.html#Comments
+[google-python-comments]: https://google.github.io/styleguide/pyguide.html#Comments
 [ruby-naming-bang]: http://dablog.rubypal.com/2007/8/15/bang-methods-or-danger-will-rubyist
+[ruby-freeze]: https://blog.honeybadger.io/when-to-use-freeze-and-frozen-in-ruby/
+[avoid-else-return-early]: http://blog.timoxley.com/post/47041269194/avoid-else-return-early
+
+## Translation
+
+  This style guide is also available in other languages:
+
+  - ![cn](https://raw.githubusercontent.com/gosquared/flags/master/flags/flags/shiny/24/China.png) **Chinese (Simplified)**: [1c7/ruby-airbnb](https://github.com/1c7/ruby-airbnb)
